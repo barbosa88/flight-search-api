@@ -1,20 +1,26 @@
 # Flight-In
-API that provides flights information between 2 destinations from the selected airlines.  
+API that provides flight information between 2 locations from the selected airlines.  
 
 The API provides the average price of total flights and can be filtered by destination, dates and currency.
 
 ## Requirements
-- Java11
-- Maven
 - Docker
 
 ## Setup
-The [docker-compose](docker-compose.yaml) provides a mongodb & mongo-express container.
-```bash
-docker-compose up -d
-mvn spring-boot:run
+The [docker-compose](docker-compose.yaml) defines and configures all the services used in the application.
+### Creating docker image
+Run below command to create the docker image.
 ```
-The server is running on local port 8084 and mongo-express on local port 8888.
+docker build -t flightin .
+```
+### Running docker-compose
+Run below command to start the application.  
+The command will create one container for the database and one container for the springboot application.
+```bash
+docker-compose up
+```
+Container port 8080 is mapped to port 8081 on host machine, which means that the springboot application will be available at http://localhost:8081.  
+Also, a mongodb client (mongo-express) is available at http://localhost:8888.
 
 ## API 
 The [swagger](swagger.yaml) file describes the API endpoints and operations.  
@@ -23,7 +29,7 @@ Also, a [postman collection](flightin.postman_collection.json) is provided with 
 ### Sample Request/Response
 The following snippet requests TAP and Ryanair flight information between Porto-Lisbon and Lisbon-Porto in EUR from 06/03/2021 to 07/03/2021.
 ```bash
-curl --location --request GET 'http://localhost:8084/flights/avg?dest=LIS&dest=OPO&airline=FR&airline=TP&curr=EUR&dateFrom=06/03/2021&dateTo=07/03/2021' \
+curl --location --request GET 'http://localhost:8081/flights/avg?dest=LIS&dest=OPO&airline=FR&airline=TP&curr=EUR&dateFrom=06/03/2021&dateTo=07/03/2021' \
 --header 'Accept: application/json'
 {
     "LIS": {
@@ -52,7 +58,7 @@ curl --location --request GET 'http://localhost:8084/flights/avg?dest=LIS&dest=O
 ```
 
 ## Search history
-Received requests are saved in a local Database (mongo).  
+Received requests are saved in a local Database.  
 The API provides 3 extra endpoints to find or delete the received requests.
 ```bash
 GET /flights/history  
@@ -69,7 +75,7 @@ The implementation of this API follows the Hexagonal Architecture principles, wh
 
 ## Stack
 - Java11
-- Springboot (web, mongodb)
+- Springboot (web, mongodb, cache)
 - Feign
 - Lombok/Mapstruct
 
