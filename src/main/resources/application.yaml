@@ -1,0 +1,26 @@
+server:
+  port: 8084
+spring:
+  application:
+    name: flightin-application
+    version: 1
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/auditDB
+  jackson:
+    default-property-inclusion: non_null
+springdoc:
+  swagger-ui:
+    path: /
+feign:
+  client:
+    config:
+      skypicker:
+        loggerLevel: basic
+        errorDecoder: pt.flightin.flightsearch.skypicker.client.errorhandling.SkypickerErrorDecoder
+        encoder: feign.jackson.JacksonEncoder
+        decoder: feign.jackson.JacksonDecoder
+        client: feign.okhttp.OkHttpClient
+client:
+  skypicker:
+    url: https://api.skypicker.com

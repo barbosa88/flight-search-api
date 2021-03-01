@@ -1,0 +1,220 @@
+openapi: 3.0.1
+info:
+  title: Flight-In-Portugal Search API
+  version: v0
+  description: API that provides flights information between 2 destinations from the selected airlines.
+servers:
+- url: http://localhost:8084
+  description: Generated server url
+paths:
+  /flights/avg:
+    get:
+      tags:
+      - flightin-search
+      operationId: findDestinations
+      parameters:
+      - name: dest
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: airline
+        in: query
+        required: true
+        schema:
+          type: array
+          items:
+            type: string
+      - name: curr
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: dateFrom
+        in: query
+        schema:
+          type: string
+          format: date
+      - name: dateTo
+        in: query
+        schema:
+          type: string
+          format: date
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "502":
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  $ref: '#/components/schemas/FlightAverageData'
+  /flights/history:
+    get:
+      tags:
+      - flightin-history
+      operationId: findAllRequests
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "502":
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Request'
+  /flights/history/{id}:
+    get:
+      tags:
+      - flightin-history
+      operationId: findRequest
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "502":
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Request'
+    delete:
+      tags:
+      - flightin-history
+      operationId: deleteRequest
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "404":
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "502":
+          description: Bad Gateway
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorTemplate'
+        "204":
+          description: No Content
+components:
+  schemas:
+    ErrorTemplate:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        message:
+          type: string
+        path:
+          type: string
+    Request:
+      type: object
+      properties:
+        id:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        createdBy:
+          type: string
+        request:
+          type: string
+        headers:
+          type: string
+    BagAveragePrice:
+      type: object
+      properties:
+        bag1_average:
+          type: number
+        bag2_average:
+          type: number
+    FlightAverageData:
+      type: object
+      properties:
+        currency:
+          type: string
+        name:
+          type: string
+        from:
+          type: string
+          format: date
+        to:
+          type: string
+          format: date
+        price_average:
+          type: number
+        bags_price:
+          $ref: '#/components/schemas/BagAveragePrice'

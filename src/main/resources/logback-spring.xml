@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- PROPERTIES -->
+    <springProperty scope="context" name="springAppName" source="spring.application.name"/>
+    <property name="LOG_FILE" value="${BUILD_FOLDER:-build}/${springAppName}.log"/>
+
+    <!-- APPENDERS -->
+    <!-- Appender to log to console -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %highlight(%d{ISO8601} %-5level) %cyan([%X{X-B3-TraceId:-noTraceId}]) %yellow(%-40.40logger{39}) %highlight(|-) %msg %n%wEx
+            </Pattern>
+        </layout>
+    </appender>
+
+    <!-- Appender to log to file -->
+    <appender name="ROLLING_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_FILE}</file>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <Pattern>%d %p %C{1.} [%t] %m%n</Pattern>
+        </encoder>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily and when the file reaches 10 MegaBytes -->
+            <fileNamePattern>${LOG_FILE}/archived/spring-boot-logger-%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- ==> Log Levels: OFF, TRACE, DEBUG, INFO, WARN, ERROR, FATAL <== -->
+
+    <!-- ROOT LOGGERS -->
+    <!-- LOG everything at INFO level -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- CUSTOM LOGGERS -->
+    <logger name="pt.flightin.flightsearch" level="TRACE"/>
+    <logger name="org.springframework.web" level="DEBUG"/>
+    <!-- Do not show warns for ExceptionHandlerExceptionResolver -->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver" level="ERROR"/>
+    <!-- Do not show warns for MongoPersistentEntityIndexCreator -->
+    <logger name="org.springframework.data.mongodb.core.index.MongoPersistentEntityIndexCreator" level="ERROR"/>
+
+</configuration>
