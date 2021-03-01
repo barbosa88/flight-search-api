@@ -1,12 +1,11 @@
 server:
-  port: 8084
+  port: 8080
 spring:
   application:
     name: flightin-application
-    version: 1
   data:
     mongodb:
-      uri: mongodb://localhost:27017/auditDB
+      uri: mongodb://api-database:27017/auditDB
   jackson:
     default-property-inclusion: non_null
 springdoc:
