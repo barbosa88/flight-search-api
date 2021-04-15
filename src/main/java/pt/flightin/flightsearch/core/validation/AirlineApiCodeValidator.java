@@ -8,7 +8,6 @@ import pt.flightin.flightsearch.core.exception.ResourceNotFoundException;
 import pt.flightin.flightsearch.core.port.out.FlightRemotePort;
 
 import java.util.List;
-import javax.validation.constraints.NotEmpty;
 
 @Slf4j
 @Component("airlineValidator")
@@ -22,7 +21,7 @@ public class AirlineApiCodeValidator implements ApiCodeValidator {
     }
 
     @Override
-    public void validate(@NotEmpty List<String> airlineList) throws BaseException {
+    public void validate(List<String> airlineList) throws BaseException {
         log.debug("Validating {} airlines", airlineList.toString());
 
         for (String code : airlineList) {
